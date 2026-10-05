@@ -1,0 +1,54 @@
+import heapq
+
+goal = (1,2,3,4,5,6,7,8,0)
+
+def h(state):
+    return sum(state[i] != goal[i] and state[i] != 0 for i in range(9))
+
+def astar(start):
+    pq = [(h(start), 0, start)]
+    visited = set()
+
+    while pq:
+        f, g, state = heapq.heappop(pq)
+
+        if state in visited:
+            continue
+        visited.add(state)
+
+        if state == goal:
+            return g, h(state), f
+
+        z = state.index(0)
+        r, c = z//3, z%3
+
+        for nz in [z-3, z+3, z-1, z+1]:
+            if 0 <= nz < 9 and abs(nz//3-r) + abs(nz%3-c) == 1:
+                new = list(state)
+                new[z], new[nz] = new[nz], new[z]
+                new = tuple(new)
+
+                if new not in visited:
+                    ng = g + 1
+                    nf = ng + h(new)
+                    heapq.heappush(pq, (nf, ng, new))
+
+start = tuple(map(int, input("Enter 9 numbers (0 for blank): ").split()))
+
+result = astar(start)
+
+print("\nINITIAL STATE:")
+print(start[:3])
+print(start[3:6])
+print(start[6:])
+
+print("\nFINAL STATE:")
+print(goal[:3])
+print(goal[3:6])
+print(goal[6:])
+
+print("\nA* USING MISPLACED TILES")
+print("g(n) =", result[0])
+print("h(n) =", result[1])
+print("f(n) =", result[2])
+print("Number of moves =", result[0])
