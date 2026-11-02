@@ -1,0 +1,52 @@
+import random
+
+N = int(input("Enter number of queens: "))
+
+# Calculate attacking pairs
+def cost(board):
+    conflicts = 0
+
+    for i in range(N):
+        for j in range(i + 1, N):
+            if board[i] == board[j] or abs(board[i] - board[j]) == abs(i - j):
+                conflicts += 1
+
+    return conflicts
+
+
+# Hill Climbing Algorithm
+def hill_climbing():
+
+    board = [random.randint(0, N-1) for _ in range(N)]
+
+    while True:
+
+        current_cost = cost(board)
+        print("Board:", board, "Cost:", current_cost)
+
+        if current_cost == 0:
+            print("Solution Found:", board)
+            break
+
+        best_board = board
+        best_cost = current_cost
+
+        for col in range(N):
+            for row in range(N):
+
+                new_board = board.copy()
+                new_board[col] = row
+                new_cost = cost(new_board)
+
+                if new_cost < best_cost:
+                    best_board = new_board
+                    best_cost = new_cost
+
+        if best_cost == current_cost:
+            print("Local Minimum Reached!")
+            break
+
+        board = best_board
+
+
+hill_climbing()
