@@ -1,0 +1,79 @@
+
+import random
+import math
+
+N = 8
+
+# Calculate the number of attacking pairs
+def cost(board):
+    conflicts = 0
+
+    for i in range(N):
+        for j in range(i + 1, N):
+            if (board[i] == board[j] or
+                abs(board[i] - board[j]) == abs(i - j)):
+                conflicts += 1
+
+    return conflicts
+
+
+# Simulated Annealing
+def simulated_annealing():
+
+    # Initial random board
+    board = [random.randint(0, N-1) for _ in range(N)]
+
+    temperature = 100
+    cooling_rate = 0.995
+    min_temperature = 0.01
+    max_iterations = 100000
+
+    for iteration in range(max_iterations):
+
+        current_cost = cost(board)
+
+        # Check if solution is found
+        if current_cost == 0:
+            print("\nSolution Found!")
+            print("Board:", board)
+            print("Iterations:", iteration)
+            return board
+
+        # Generate a neighbouring state
+        new_board = board.copy()
+        col = random.randint(0, N-1)
+
+        # Ensure the new position differs from the old one
+        new_row = random.randint(0, N-1)
+        while new_row == board[col]:
+            new_row = random.randint(0, N-1)
+
+        new_board[col] = new_row
+
+        new_cost = cost(new_board)
+
+        # Accept better solutions
+        if new_cost < current_cost:
+            board = new_board
+
+        # Sometimes accept worse solutions
+        elif random.random() < math.exp(
+            (current_cost - new_cost) / temperature
+        ):
+            board = new_board
+
+        # Cool down
+        temperature *= cooling_rate
+
+        # Restart temperature periodically
+        if temperature < min_temperature:
+            temperature = 100
+
+    print("\nSolution Not Found!")
+    print("Best board:", board)
+    print("Conflicts:", cost(board))
+    return None
+
+
+# Run the algorithm
+simulated_annealing()
