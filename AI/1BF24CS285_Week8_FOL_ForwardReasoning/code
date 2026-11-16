@@ -1,0 +1,43 @@
+# FOL Forward Chaining Algorithm
+
+def forward_chaining(facts, rules, goal):
+    known_facts = set(facts)
+
+    while True:
+        new_fact_found = False
+
+        for premises, conclusion in rules:
+            if all(p in known_facts for p in premises):
+                if conclusion not in known_facts:
+                    known_facts.add(conclusion)
+                    print("Derived:", conclusion)
+                    new_fact_found = True
+
+                    if conclusion == goal:
+                        print("\nGoal proved:", goal)
+                        return True
+
+        if goal in known_facts:
+            print("\nGoal proved:", goal)
+            return True
+
+        if not new_fact_found:
+            break
+
+    print("\nGoal cannot be proved.")
+    return False
+
+
+# Known facts
+facts = ["Human(Socrates)"]
+
+# Rules: (Premises, Conclusion)
+rules = [
+    (["Human(Socrates)"], "Mortal(Socrates)")
+]
+
+# Goal
+goal = "Mortal(Socrates)"
+
+# Execute Forward Chaining
+forward_chaining(facts, rules, goal)
