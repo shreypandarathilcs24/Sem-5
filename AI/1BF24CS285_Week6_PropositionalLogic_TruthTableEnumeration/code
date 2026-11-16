@@ -1,0 +1,47 @@
+
+from itertools import product
+
+# Logical implication
+def implies(a, b):
+    return not a or b
+
+# Predicates
+symbols = ['P', 'Q']
+
+# Knowledge Base (Single KB)
+def KB(m):
+    return implies(m['P'], m['Q'])
+
+# Query
+queries = {
+    "P -> Q": lambda m: implies(m['P'], m['Q']),
+    "Q": lambda m: m['Q']
+}
+
+# Truth Table Enumeration
+models = []
+table = []
+
+print("P       Q       KB")
+
+for values in product([False, True], repeat=2):
+
+    model = dict(zip(symbols, values))
+
+    kb = KB(model)
+
+    table.append([model['P'], model['Q'], kb])
+
+    if kb:
+        models.append(model)
+
+# Display truth table
+for row in table:
+    print(f"{str(row[0]):<8}{str(row[1]):<8}{row[2]}")
+
+# Check entailment
+print("\nModels satisfying KB:", models)
+
+for query, formula in queries.items():
+    entails = all(formula(m) for m in models)
+    print("KB entails", query, ":", entails)
